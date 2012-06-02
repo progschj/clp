@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <string>
+#include <memory>
 
 #include <CL/cl.h>
 

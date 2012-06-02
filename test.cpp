@@ -1,12 +1,5 @@
 #include <iostream>
-#include <memory>
-#include <stdexcept>
-#include <type_traits>
 #include <algorithm>
-#include <vector>
-#include <cmath>
-
-#include <CL/cl.h>
 
 #include "include/CLUtility.h"
 #include "include/CLEvent.h"
@@ -14,50 +7,44 @@
 #include "include/CLBuffer.h"
 #include "include/CLProgram.h"
 
-
 int main()
 {
-	clp::Context context(CL_DEVICE_TYPE_GPU, 1, 2);
+	// create a context for the second GPU with one command queues
+	clp::Context context(CL_DEVICE_TYPE_GPU, 1, 1);
 
-
+	// create and build a program
 	clp::Program program(context);
 	program.setSource(
-	"float2 cmul(float2 a, float2 b)\n"
-	"{\n"
-	"	return (float2)(a.x*b.x-a.y*b.y, a.x*b.y+a.y*b.x);"
-	"}\n" 
-	
-	"__kernel void saxpy(__global float *x, __global float *y, float a)\n"
+	"kernel void saxpy(global float *x, global float *y, float a)\n"
 	"{\n"
 	"	const uint index = get_global_id(0);\n"
 	"	x[index] += a*y[index];\n"
 	"}\n"
 	);
 	program.build();
+	
+	// obtain a kernel object
 	clp::Kernel<void(float*, float*, float)> saxpy = program.getKernel<void(float*, float*, float)>("saxpy");
 	
+	// create device buffers
 	clp::Buffer<float> x(context, 1024);
 	clp::Buffer<float> y(context, 1024);
 
-	context.setCurrentQueue(0);
-	x.map();
-	y.map().wait();
+	// map the buffers
+	clp::Event xevent = x.map();
+	clp::Event yevent = y.map();
 	
-	
+	// fill them with data and unmap
+	xevent.wait();
 	std::fill(x.begin(), x.end(), 45);
-	std::fill(y.begin(), y.end(), 3);
-
 	x.unmap();
+	
+	yevent.wait();
+	std::fill(y.begin(), y.end(), 3);
 	y.unmap();
 
+	// execute kernel
 	saxpy(clp::Worksize(1024,256), x, y, 13);
-
-	x.map().wait();
-	for(size_t i = 0;i<x.size();++i)
-	{
-		std::cout << x[i] << std::endl;
-	}
-	x.unmap();
 	
 	return 0;
 }
