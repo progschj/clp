@@ -172,7 +172,7 @@ public:
     
     inline size_type size() const { return buffersize; }
 
-	cl_mem* getMem() { return &buffer; }
+	const cl_mem* getMem() const { return &buffer; }
 	Event getLastEvent() { return event; }
 	
 	bool isMapped() const { return host_ptr != 0; }

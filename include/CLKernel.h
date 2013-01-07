@@ -40,6 +40,30 @@ struct Args< Buffer<T> > {
 };
 
 template<class T>
+struct Args< const Buffer<T> > {
+	static void set(cl_kernel kernel, int n, const Buffer<T> &arg)
+	{
+		checkError(clSetKernelArg(kernel, n, sizeof(cl_mem), arg.getMem()));
+	}
+};
+
+template<class T>
+struct Args< Image2D<T> > {
+	static void set(cl_kernel kernel, int n, Image2D<T> &arg)
+	{
+		checkError(clSetKernelArg(kernel, n, sizeof(cl_mem), arg.getMem()));
+	}
+};
+
+template<class T>
+struct Args< const Image2D<T> > {
+	static void set(cl_kernel kernel, int n, const Image2D<T> &arg)
+	{
+		checkError(clSetKernelArg(kernel, n, sizeof(cl_mem), arg.getMem()));
+	}
+};
+
+template<class T>
 struct Args< Local<T> > {
 	static void set(cl_kernel kernel, int n, Local<T> arg)
 	{

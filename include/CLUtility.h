@@ -3,7 +3,7 @@
 
 #include <stdexcept>
 #include <string>
-
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 #include <CL/cl.h>
 
 namespace clp
@@ -76,6 +76,38 @@ inline void checkError(cl_int error)
 	if(error != CL_SUCCESS)
 		throw std::runtime_error(getStringFromError(error));
 }
+
+template<class T>
+struct type2format {
+};
+
+#define OPENCL_TYPE2DEFINE(T,VALUE)                                 \
+template<>                                                          \
+struct type2format<T> {                                             \
+    static const cl_channel_type type = VALUE;                      \
+    static const cl_channel_order order = CL_R;                     \
+};                                                                  \
+template<>                                                          \
+struct type2format<T##2> {                                          \
+    static const cl_channel_type type = VALUE;                      \
+    static const cl_channel_order order = CL_RG;                    \
+};                                                                  \
+template<>                                                          \
+struct type2format<T##4> {                                          \
+    static const cl_channel_type type = VALUE;                      \
+    static const cl_channel_order order = CL_RGBA;                  \
+};                                                                  \
+
+
+OPENCL_TYPE2DEFINE(cl_char, CL_SIGNED_INT8)
+OPENCL_TYPE2DEFINE(cl_short, CL_SIGNED_INT16)
+OPENCL_TYPE2DEFINE(cl_int, CL_SIGNED_INT32)
+OPENCL_TYPE2DEFINE(cl_uchar, CL_UNSIGNED_INT8)
+OPENCL_TYPE2DEFINE(cl_ushort, CL_UNSIGNED_INT16)
+OPENCL_TYPE2DEFINE(cl_uint, CL_UNSIGNED_INT32)
+OPENCL_TYPE2DEFINE(cl_float, CL_FLOAT)
+
+#undef OPENCL_TYPE2DEFINE
 
 }
 

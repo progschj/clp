@@ -4,7 +4,9 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <vector>
 
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 #include <CL/cl.h>
 
 #include "CLUtility.h"

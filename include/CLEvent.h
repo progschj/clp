@@ -1,6 +1,7 @@
 #ifndef CL_EVENT_H
 #define CL_EVENT_H
 
+#define CL_USE_DEPRECATED_OPENCL_1_1_APIS
 #include <CL/cl.h>
 
 #include "CLUtility.h"
