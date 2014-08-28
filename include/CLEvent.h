@@ -2,7 +2,11 @@
 #define CL_EVENT_H
 
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
+#ifdef __APPLE__
+#include <OpenCL/cl.h>
+#else
 #include <CL/cl.h>
+#endif
 
 #include "CLUtility.h"
 

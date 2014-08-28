@@ -4,7 +4,11 @@
 #include <stdexcept>
 #include <string>
 #define CL_USE_DEPRECATED_OPENCL_1_1_APIS
+#ifdef __APPLE__
+#include <OpenCL/cl.h>
+#else
 #include <CL/cl.h>
+#endif
 
 namespace clp
 {

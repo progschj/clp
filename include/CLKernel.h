@@ -3,6 +3,7 @@
 
 #include "CLEvent.h"
 #include "CLContext.h"
+#include "CLImage.h"
 
 namespace clp {
 	
